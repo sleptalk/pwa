@@ -121,7 +121,15 @@
             obtenerUbicacion(codigo); // Obtener la ubicación después de ingresar el código  
 
             // Iniciar la actualización de ubicación cada 20 segundos  
-            intervaloUbicacion = setInterval(() => obtenerUbicacion(codigo), 20000);  
+            intervaloUbicacion = setInterval(() => {  
+              obtenerUbicacion(codigo);  
+              // Registrar el evento de sincronización  
+              if ("serviceWorker" in navigator && "SyncManager" in window) {  
+                navigator.serviceWorker.ready.then((registration) => {  
+                  return registration.sync.register("enviarUbicacion");  
+                });  
+              }  
+            }, 20000);  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
@@ -134,7 +142,7 @@
 
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
-      navigator.serviceWorker.register("./sw.js").then((registration) => {  
+      navigator.serviceWorker.register("./ws.js").then((registration) => {  
         console.log("Service Worker registrado con éxito:", registration);  
       }).catch((error) => {  
         console.error("Error al registrar el Service Worker:", error);  
