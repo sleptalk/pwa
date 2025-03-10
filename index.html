@@ -90,20 +90,22 @@
 
     // Función para enviar la ubicación al script de Google Apps Script  
     function enviarUbicacion(latitud, longitud, codigoConductor) {  
-      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
+      const url =  
+        "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud,  
-        longitud: longitud  
+        longitud: longitud,  
       });  
 
       fetch(url + "?" + params.toString(), {  
         method: "GET",  
-        mode: "cors"  
+        mode: "cors",  
       })  
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
-          document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
+          document.getElementById("mensajeUbicacion").innerText =  
+            "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
           mostrarNotificacion(latitud, longitud);  
         })  
         .catch((error) => {  
@@ -129,32 +131,39 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" + codigo;  
+      const url =  
+        "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" +  
+        codigo;  
 
       fetch(url)  
-        .then(response => response.json())  
-        .then(data => {  
+        .then((response) => response.json())  
+        .then((data) => {  
           if (data.nombre) {  
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
             codigoIngresado = true;  
             document.getElementById("codigoConductor").disabled = true;  
             obtenerUbicacion(codigo); // Obtener la ubicación después de ingresar el código  
 
-            // Iniciar la actualización de ubicación cada 20 segundos  
-            setInterval(() => {  
-              obtenerUbicacion(codigo);  
-              // Registrar el evento de sincronización  
-              if ("serviceWorker" in navigator && "SyncManager" in window) {  
-                navigator.serviceWorker.ready.then((registration) => {  
-                  return registration.sync.register("enviarUbicacion");  
+            // Registrar la sincronización en segundo plano  
+            if ("serviceWorker" in navigator && "SyncManager" in window) {  
+              navigator.serviceWorker.ready.then((registration) => {  
+                registration.sync.register("enviarUbicacion");  
+              });  
+            }  
+
+            // Registrar la sincronización periódica  
+            if ("serviceWorker" in navigator && "PeriodicSyncManager" in window) {  
+              navigator.serviceWorker.ready.then((registration) => {  
+                registration.periodicSync.register("actualizarUbicacion", {  
+                  minInterval: 24 * 60 * 60 * 1000, // Cada 24 horas  
                 });  
-              }  
-            }, 20000);  
+              });  
+            }  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
         })  
-        .catch(error => {  
+        .catch((error) => {  
           console.error("Error al obtener el nombre del conductor:", error);  
           document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
         });  
@@ -162,11 +171,14 @@
 
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
-      navigator.serviceWorker.register("https://github.com/sleptalk/pwa/blob/main/script.js").then((registration) => {  
-        console.log("Service Worker registrado con éxito:", registration);  
-      }).catch((error) => {  
-        console.error("Error al registrar el Service Worker:", error);  
-      });  
+      navigator.serviceWorker  
+        .register("./ws.js")  
+        .then((registration) => {  
+          console.log("Service Worker registrado con éxito:", registration);  
+        })  
+        .catch((error) => {  
+          console.error("Error al registrar el Service Worker:", error);  
+        });  
 
       navigator.serviceWorker.addEventListener("message", (event) => {  
         if (event.data.action === "obtenerUbicacion") {  
