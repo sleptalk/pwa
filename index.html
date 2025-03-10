@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <title>Panel de administración</title>  
   <link rel="manifest" href="./manifest.json">  
-  <link rel="shortcut icon href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
   <style>  
     body {  
       margin: 0;  
@@ -86,8 +86,8 @@
       const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
-        latitud: latitud.toString(), // Asegúrate de que la latitud sea una cadena  
-        longitud: longitud.toString() // Asegúrate de que la longitud sea una cadena  
+        latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
+        longitud: longitud.toFixed(5) // Asegúrate de que la longitud tenga 5 decimales  
       });  
 
       fetch(url + "?" + params.toString(), {  
