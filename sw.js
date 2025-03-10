@@ -46,23 +46,24 @@ self.addEventListener("fetch", (e) => {
 
 // Manejo de mensajes desde la aplicación principal  
 self.addEventListener("message", (e) => {  
-  if (e.data === "iniciar") {  
+  if (e.data.action === "iniciar") {  
     // Iniciar la obtención de la ubicación  
-    intervaloUbicacion = setInterval(obtenerUbicacion, 20000); // Cada 20 segundos  
-  } else if (e.data === "detener") {  
+    const codigoConductor = e.data.codigo; // Obtener el código del conductor del mensaje  
+    intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductor), 20000); // Cada 20 segundos  
+  } else if (e.data.action === "detener") {  
     // Detener la obtención de la ubicación  
     clearInterval(intervaloUbicacion);  
   }  
 });  
 
 // Función para obtener la ubicación  
-function obtenerUbicacion() {  
+function obtenerUbicacion(codigoConductor) {  
   if ("geolocation" in navigator) {  
     navigator.geolocation.getCurrentPosition(  
       (position) => {  
         const latitud = position.coords.latitude;  
         const longitud = position.coords.longitude;  
-        enviarUbicacion(latitud, longitud);  
+        enviarUbicacion(codigoConductor, latitud, longitud);  
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
@@ -74,10 +75,10 @@ function obtenerUbicacion() {
 }  
 
 // Función para enviar la ubicación al servidor  
-function enviarUbicacion(latitud, longitud) {  
+function enviarUbicacion(codigoConductor, latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
-    codigo: "ABC123", // Reemplaza con el código del conductor  
+    codigo: codigoConductor, // Usar el código del conductor recibido  
     latitud: latitud,  
     longitud: longitud,  
   });  
