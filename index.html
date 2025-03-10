@@ -10,9 +10,14 @@
   <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
 </head>  
 
-<body style="margin: 0; padding: 0; height: 100vh;">  
+<body style="margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;">  
   <div id="mensajeUbicacion" style="padding: 20px; font-family: Arial, sans-serif;">  
     Obteniendo ubicación...  
+  </div>  
+
+  <div id="formulario" style="display: flex; flex-direction: column; align-items: center;">  
+    <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor" style="padding: 10px; margin-bottom: 10px;">  
+    <button id="btnEnviar" style="padding: 10px;">Enviar Código</button>  
   </div>  
 
   <script>  
@@ -38,14 +43,14 @@
 
     // Función para enviar la ubicación al script de Google Apps Script  
     function enviarUbicacion(latitud, longitud) {  
-      const codigoConductor = localStorage.getItem("codigoConductor"); // Obtén el código del conductor desde localStorage  
+      const codigoConductor = document.getElementById("codigoConductor").value; // Obtén el código del conductor desde el input  
       if (!codigoConductor) {  
         console.error("Código de conductor no encontrado.");  
         document.getElementById("mensajeUbicacion").innerText = "Primero debes ingresar un código de conductor.";  
         return;  
       }  
 
-      const url = "https://script.google.com/macros/s/AKfycbxbtyoWDfdqulykLyqWCAtcKlDeF_fPMmA-Kf3tSV9ZKBQmzBlzf3cUhyQqHEdJGaCeSA/exec";  
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud,  
@@ -66,7 +71,11 @@
         });  
     }  
 
-    // Llama a la función para obtener la ubicación al cargar la página  
-    obtenerUbicacion();  
+    // Llama a la función para obtener la ubicación al hacer clic en el botón  
+    document.getElementById("btnEnviar").addEventListener("click", function() {  
+      obtenerUbicacion();  
+    });  
   </script>  
 </body>  
+
+</html>  
