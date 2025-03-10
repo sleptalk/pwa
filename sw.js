@@ -53,11 +53,26 @@ function obtenerUbicacion(codigoConductor) {
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
+        let errorMessage = "Error al obtener la ubicación.";  
+        switch (error.code) {  
+          case error.PERMISSION_DENIED:  
+            errorMessage = "Permiso denegado para acceder a la ubicación.";  
+            break;  
+          case error.POSITION_UNAVAILABLE:  
+            errorMessage = "La ubicación no está disponible.";  
+            break;  
+          case error.TIMEOUT:  
+            errorMessage = "La solicitud de geolocalización ha expirado.";  
+            break;  
+          case error.UNKNOWN_ERROR:  
+            errorMessage = "Se ha producido un error desconocido.";  
+            break;  
+        }  
         self.clients.matchAll().then((clients) => {  
           clients.forEach((client) => {  
             client.postMessage({  
               action: "actualizarMensaje",  
-              mensaje: "Error al obtener la ubicación: " + error.message,  
+              mensaje: errorMessage,  
             });  
           });  
         });  
@@ -78,9 +93,12 @@ function enviarUbicacion(codigoConductor, latitud, longitud) {
 
   fetch(url + "?" + params.toString(), {  
     method: "GET",  
-    mode: "no-cors",  
+    mode: "cors",  // Cambiado a "cors"  
   })  
-    .then(() => {  
+    .then((response) => {  
+      if (!response.ok) {  
+        throw new Error("Error en la respuesta del servidor: " + response.statusText);  
+      }  
       console.log("Ubicación enviada correctamente.");  
       self.clients.matchAll().then((clients) => {  
         clients.forEach((client) => {  
