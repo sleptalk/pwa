@@ -1,7 +1,7 @@
 const CACHE_NAME = "v1_cache_panel_adm";  
 const urlsToCache = [  
   "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec",  
-  "./manifest.json",  
+  "./pwa/manifest.json",  
 ];  
 
 self.addEventListener("install", (e) => {  
