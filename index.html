@@ -7,7 +7,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">  
   <title>Panel de administración</title>  
   <link rel="manifest" href="./manifest.json">  
-  <link rel="shortcut icon href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
   <style>  
     body {  
       margin: 0;  
@@ -19,21 +19,25 @@
       justify-content: center;  
       font-family: Arial, sans-serif;  
     }  
+
     #formulario {  
       display: flex;  
       flex-direction: column;  
       align-items: center;  
       margin-top: 20px;  
     }  
+
     input {  
       padding: 10px;  
       margin-bottom: 10px;  
-      width: 200px; /* Ajusta el ancho según sea necesario */  
+      width: 200px;  
     }  
+
     button {  
       padding: 10px;  
       cursor: pointer;  
     }  
+
     #nombreChofer {  
       margin-top: 10px;  
       font-weight: bold;  
@@ -51,19 +55,19 @@
   </div>  
 
   <script>  
-    let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
-    let intervaloUbicacion; // Variable para almacenar el intervalo de actualización de ubicación  
+    let codigoIngresado = false;  
+    let intervaloUbicacion;  
 
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
       console.log("Intentando obtener la ubicación...");  
       if (navigator.geolocation) {  
         navigator.geolocation.getCurrentPosition(  
-          function (position) {  
+          (position) => {  
             console.log("Ubicación obtenida:", position.coords.latitude, position.coords.longitude);  
             enviarUbicacion(position.coords.latitude, position.coords.longitude);  
           },  
-          function (error) {  
+          (error) => {  
             console.error("Error al obtener la ubicación:", error.message);  
             document.getElementById("mensajeUbicacion").innerText = "Error al obtener la ubicación: " + error.message;  
           }  
@@ -74,9 +78,9 @@
       }  
     }  
 
-    // Función para enviar la ubicación al script de Google Apps Script  
+    // Función para enviar la ubicación  
     function enviarUbicacion(latitud, longitud) {  
-      const codigoConductor = document.getElementById("codigoConductor").value; // Obtén el código del conductor desde el input  
+      const codigoConductor = document.getElementById("codigoConductor").value;  
       if (!codigoConductor) {  
         console.error("Código de conductor no encontrado.");  
         document.getElementById("mensajeUbicacion").innerText = "Primero debes ingresar un código de conductor.";  
@@ -86,13 +90,13 @@
       const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
-        latitud: latitud.toString(), // Asegúrate de que la latitud sea una cadena  
-        longitud: longitud.toString() // Asegúrate de que la longitud sea una cadena  
+        latitud: latitud.toString(),  
+        longitud: longitud.toString(),  
       });  
 
       fetch(url + "?" + params.toString(), {  
         method: "GET",  
-        mode: "no-cors" // Modo no-cors para evitar problemas de CORS  
+        mode: "no-cors",  
       })  
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
@@ -104,10 +108,27 @@
         });  
     }  
 
-    // Función para manejar el envío del código del conductor  
-    document.getElementById("btnEnviar").addEventListener("click", function() {  
+    // Función para iniciar la obtención de la ubicación en segundo plano  
+    function iniciarUbicacionSegundoPlano() {  
+      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
+        navigator.serviceWorker.controller.postMessage("iniciar");  
+      }  
+    }  
+
+    // Función para detener la obtención de la ubicación en segundo plano  
+    function detenerUbicacionSegundoPlano() {  
+      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
+        navigator.serviceWorker.controller.postMessage("detener");  
+      }  
+    }  
+
+    // Manejar el envío del código del conductor  
+    document.getElementById("btnEnviar").addEventListener("click", () => {  
       const codigoConductor = document.getElementById("codigoConductor").value;  
-      obtenerNombreConductor(codigoConductor);  
+      if (codigoConductor) {  
+        obtenerNombreConductor(codigoConductor);  
+        iniciarUbicacionSegundoPlano(); // Iniciar la ubicación en segundo plano  
+      }  
     });  
 
     // Función para obtener el nombre del conductor  
@@ -115,21 +136,18 @@
       const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" + codigo;  
 
       fetch(url)  
-        .then(response => response.json())  
-        .then(data => {  
+        .then((response) => response.json())  
+        .then((data) => {  
           if (data.nombre) {  
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
-            codigoIngresado = true; // Marcar que el código ha sido ingresado  
-            document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
-            obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
-
-            // Iniciar la actualización de ubicación cada 20 segundos  
-            intervaloUbicacion = setInterval(obtenerUbicacion, 20000);  
+            codigoIngresado = true;  
+            document.getElementById("codigoConductor").disabled = true;  
+            obtenerUbicacion(); // Obtener la ubicación inicial  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
         })  
-        .catch(error => {  
+        .catch((error) => {  
           console.error("Error al obtener el nombre del conductor:", error);  
           document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
         });  
