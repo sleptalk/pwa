@@ -52,6 +52,7 @@
 
   <script>  
     let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
+    let intervaloUbicacion; // Variable para almacenar el intervalo de actualización  
 
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
@@ -74,35 +75,34 @@
     }  
 
     // Función para enviar la ubicación al script de Google Apps Script  
-    
     function enviarUbicacion(latitud, longitud) {  
-  const codigoConductor = document.getElementById("codigoConductor").value; // Obtén el código del conductor desde el input  
-  if (!codigoConductor) {  
-    console.error("Código de conductor no encontrado.");  
-    document.getElementById("mensajeUbicacion").innerText = "Primero debes ingresar un código de conductor.";  
-    return;  
-  }  
+      const codigoConductor = document.getElementById("codigoConductor").value; // Obtén el código del conductor desde el input  
+      if (!codigoConductor) {  
+        console.error("Código de conductor no encontrado.");  
+        document.getElementById("mensajeUbicacion").innerText = "Primero debes ingresar un código de conductor.";  
+        return;  
+      }  
 
-  const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
-  const params = new URLSearchParams({  
-    codigo: codigoConductor,  
-    latitud: parseFloat(latitud.toFixed(5)), // Convertir a número  
-    longitud: parseFloat(longitud.toFixed(5)) // Convertir a número  
-  });  
+      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
+      const params = new URLSearchParams({  
+        codigo: codigoConductor,  
+        latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
+        longitud: longitud.toFixed(5) // Asegúrate de que la longitud tenga 5 decimales  
+      });  
 
-  fetch(url + "?" + params.toString(), {  
-    method: "GET",  
-    mode: "no-cors" // Modo no-cors para evitar problemas de CORS  
-  })  
-    .then(() => {  
-      console.log("Ubicación enviada correctamente.");  
-      document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
-    })  
-    .catch((error) => {  
-      console.error("Error al enviar la ubicación:", error);  
-      document.getElementById("mensajeUbicacion").innerText = "Error al enviar la ubicación: " + error.message;  
-    });  
-}  
+      fetch(url + "?" + params.toString(), {  
+        method: "GET",  
+        mode: "no-cors" // Modo no-cors para evitar problemas de CORS  
+      })  
+        .then(() => {  
+          console.log("Ubicación enviada correctamente.");  
+          document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
+        })  
+        .catch((error) => {  
+          console.error("Error al enviar la ubicación:", error);  
+          document.getElementById("mensajeUbicacion").innerText = "Error al enviar la ubicación: " + error.message;  
+        });  
+    }  
 
     // Función para manejar el envío del código del conductor  
     document.getElementById("btnEnviar").addEventListener("click", function() {  
@@ -122,6 +122,9 @@
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
             obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
+
+            // Iniciar la actualización automática de la ubicación cada 20 segundos  
+            intervaloUbicacion = setInterval(obtenerUbicacion, 20000);  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
