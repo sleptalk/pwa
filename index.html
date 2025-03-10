@@ -34,12 +34,16 @@
       padding: 10px;  
       cursor: pointer;  
     }  
+    #nombreChofer {  
+      margin-top: 10px;  
+      font-weight: bold;  
+    }  
   </style>  
 </head>  
 
 <body>  
   <div id="mensajeUbicacion">Obteniendo ubicación...</div>  
-  <div id="nombreChofer" style="margin-top: 10px; font-weight: bold;"></div>  
+  <div id="nombreChofer"></div>  
 
   <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
@@ -78,7 +82,7 @@
         return;  
       }  
 
-      const url = "https://script.google.com/macros/s/AKfycbxbtyoWDfdqulykLyqWCAtcKlDeF_fPMmA-Kf3tSV9ZKBQmzBlzf3cUhyQqHEdJGaCeSA/exec";  
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
@@ -92,6 +96,8 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
+          document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
+          document.getElementById("nombreChofer").innerText = "Chofer: " + codigoConductor; // Mostrar el nombre del chofer  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -112,7 +118,7 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycbxbtyoWDfdqulykLyqWCAtcKlDeF_fPMmA-Kf3tSV9ZKBQmzBlzf3cUhyQqHEdJGaCeSA/exec" + codigo;  
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec?codigo=" + codigo;  
 
       fetch(url)  
         .then(response => response.json())  
@@ -121,6 +127,7 @@
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
+            document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
