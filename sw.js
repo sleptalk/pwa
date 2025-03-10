@@ -53,6 +53,7 @@ self.addEventListener("message", (e) => {
   if (e.data.action === "iniciar") {  
     codigoConductorActual = e.data.codigo;  
     // Iniciar la obtención de la ubicación  
+    obtenerUbicacion(codigoConductorActual); // Primera obtención  
     intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductorActual), 20000); // Cada 20 segundos  
   } else if (e.data.action === "detener") {  
     // Detener la obtención de la ubicación  
@@ -71,7 +72,8 @@ function obtenerUbicacion(codigoConductor) {
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
-      }  
+      },  
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Opciones de geolocalización  
     );  
   } else {  
     console.error("Geolocalización no soportada por este navegador.");  
