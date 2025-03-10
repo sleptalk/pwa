@@ -1,6 +1,5 @@
 <!DOCTYPE html>  
 <html lang="es">  
-
 <head>  
   <meta charset="UTF-8">  
   <meta http-equiv="X-UA-Compatible" content="IE=edge">  
@@ -8,8 +7,10 @@
   <title>Panel de administración</title>  
   <link rel="manifest" href="./manifest.json">  
   <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
-  <style>  
-    body {  
+</head>  
+<body>  
+  <script src="./pwa/script.js"></script> <!-- Llama a script.js -->  
+</body>   
       margin: 0;  
       padding: 0;  
       height: 100vh;  
@@ -172,7 +173,7 @@
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
       navigator.serviceWorker  
-        .register("/pwa/sw.js")  
+        .register("./pwa/sw.js")  
         .then((registration) => {  
           console.log("Service Worker registrado con éxito:", registration);  
         })  
