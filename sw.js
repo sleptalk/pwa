@@ -31,14 +31,13 @@ self.addEventListener("activate", (e) => {
       )  
     )  
   );  
+  self.clients.claim();  
 });  
 
 self.addEventListener("message", (e) => {  
   if (e.data === "iniciar") {  
-    // Iniciar la obtención de la ubicación  
-    intervaloUbicacion = setInterval(obtenerUbicacion, 20000); // Cada 20 segundos  
+    intervaloUbicacion = setInterval(obtenerUbicacion, 10000); // Cada 10 segundos  
   } else if (e.data === "detener") {  
-    // Detener la obtención de la ubicación  
     clearInterval(intervaloUbicacion);  
   }  
 });  
