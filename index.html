@@ -85,8 +85,8 @@
       const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
-        latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
-        longitud: longitud.toFixed(5) // Asegúrate de que la longitud tenga 5 decimales  
+        latitud: latitud  
+        longitud: longitud
       });  
 
       fetch(url + "?" + params.toString(), {  
