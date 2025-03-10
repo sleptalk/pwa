@@ -53,6 +53,14 @@ function obtenerUbicacion(codigoConductor) {
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
+        self.clients.matchAll().then((clients) => {  
+          clients.forEach((client) => {  
+            client.postMessage({  
+              action: "actualizarMensaje",  
+              mensaje: "Error al obtener la ubicación: " + error.message,  
+            });  
+          });  
+        });  
       }  
     );  
   } else {  
