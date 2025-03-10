@@ -1,4 +1,49 @@
-<div id="formulario">  
+<!DOCTYPE html>  
+<html lang="es">  
+<head>  
+  <meta charset="UTF-8">  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+  <title>Panel de administración</title>  
+  <link rel="manifest" href="./manifest.json">  
+  <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
+  <style>  
+    body {  
+      margin: 0;  
+      padding: 0;  
+      height: 100vh;  
+      display: flex;  
+      flex-direction: column;  
+      align-items: center;  
+      justify-content: center;  
+      font-family: Arial, sans-serif;  
+    }  
+    #formulario {  
+      display: flex;  
+      flex-direction: column;  
+      align-items: center;  
+      margin-top: 20px;  
+    }  
+    input {  
+      padding: 10px;  
+      margin-bottom: 10px;  
+      width: 200px;  
+    }  
+    button {  
+      padding: 10px;  
+      cursor: pointer;  
+    }  
+    #nombreChofer {  
+      margin-top: 10px;  
+      font-weight: bold;  
+    }  
+  </style>  
+</head>  
+<body>  
+  <div id="mensajeUbicacion">Obteniendo ubicación...</div>  
+  <div id="nombreChofer"></div>  
+
+  <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
     <button id="btnEnviar">Enviar Código</button>  
   </div>  
@@ -54,4 +99,4 @@
     });  
   </script>  
 </body>  
-</html>  
+</html> 
