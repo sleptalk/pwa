@@ -6,7 +6,6 @@ const urlsToCache = [
 
 let intervaloUbicacion;  
 
-// Instalación del Service Worker y almacenamiento en caché  
 self.addEventListener("install", (e) => {  
   e.waitUntil(  
     caches  
@@ -14,11 +13,10 @@ self.addEventListener("install", (e) => {
       .then((cache) => {  
         return cache.addAll(urlsToCache).then(() => self.skipWaiting());  
       })  
-      .catch((err) => console.error("Fallo el registro del cache ", err))  
+      .catch((err) => console.error("Fallo el registro del cache", err))  
   );  
 });  
 
-// Activación del Service Worker y limpieza de caché antiguo  
 self.addEventListener("activate", (e) => {  
   const cacheWhitelist = [CACHE_NAME];  
 
@@ -33,30 +31,18 @@ self.addEventListener("activate", (e) => {
       )  
     )  
   );  
+  self.clients.claim();  
 });  
 
-// Manejo de solicitudes de red  
-self.addEventListener("fetch", (e) => {  
-  e.respondWith(  
-    caches.match(e.request).then((res) => {  
-      return res || fetch(e.request);  
-    })  
-  );  
-});  
-
-// Manejo de mensajes desde la aplicación principal  
 self.addEventListener("message", (e) => {  
   if (e.data.action === "iniciar") {  
-    // Iniciar la obtención de la ubicación  
-    const codigoConductor = e.data.codigo; // Obtener el código del conductor del mensaje  
+    const codigoConductor = e.data.codigo;  
     intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductor), 20000); // Cada 20 segundos  
   } else if (e.data.action === "detener") {  
-    // Detener la obtención de la ubicación  
     clearInterval(intervaloUbicacion);  
   }  
 });  
 
-// Función para obtener la ubicación  
 function obtenerUbicacion(codigoConductor) {  
   if ("geolocation" in navigator) {  
     navigator.geolocation.getCurrentPosition(  
@@ -74,11 +60,10 @@ function obtenerUbicacion(codigoConductor) {
   }  
 }  
 
-// Función para enviar la ubicación al servidor  
 function enviarUbicacion(codigoConductor, latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
-    codigo: codigoConductor, // Usar el código del conductor recibido  
+    codigo: codigoConductor,  
     latitud: latitud,  
     longitud: longitud,  
   });  
@@ -89,6 +74,14 @@ function enviarUbicacion(codigoConductor, latitud, longitud) {
   })  
     .then(() => {  
       console.log("Ubicación enviada correctamente.");  
+      self.clients.matchAll().then((clients) => {  
+        clients.forEach((client) => {  
+          client.postMessage({  
+            action: "actualizarMensaje",  
+            mensaje: `Ubicación actualizada: Latitud ${latitud.toFixed(5)} | Longitud ${longitud.toFixed(5)}`,  
+          });  
+        });  
+      });  
     })  
     .catch((error) => {  
       console.error("Error al enviar la ubicación:", error);  
