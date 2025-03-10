@@ -52,6 +52,7 @@
 
   <script>  
     let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
+    let intervaloUbicacion; // Variable para almacenar el intervalo de actualización  
 
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
@@ -82,7 +83,7 @@
         return;  
       }  
 
-      const url = "https://script.google.com/macros/s/AKfycby9yGwf-bMSnwJg5j-XedzxuQV01pSJ9zkAwI1CHtttntQ6FAE9yxwcZwYcTu6ddmoI3w/exec";  
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
@@ -96,7 +97,6 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
-          document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -112,7 +112,7 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycby9yGwf-bMSnwJg5j-XedzxuQV01pSJ9zkAwI1CHtttntQ6FAE9yxwcZwYcTu6ddmoI3w/exec" + codigo;  
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec?codigo=" + codigo;  
 
       fetch(url)  
         .then(response => response.json())  
@@ -122,6 +122,9 @@
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
             obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
+
+            // Iniciar la actualización automática de la ubicación cada 20 segundos  
+            intervaloUbicacion = setInterval(obtenerUbicacion, 20000);  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
