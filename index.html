@@ -122,6 +122,21 @@
         document.getElementById("mensajeUbicacion").innerText = event.data.mensaje;  
       }  
     });  
+
+    // Solicitar permisos de geolocalización al cargar la página  
+    if ("geolocation" in navigator) {  
+      navigator.geolocation.getCurrentPosition(  
+        (position) => {  
+          console.log("Permisos de geolocalización otorgados.");  
+        },  
+        (error) => {  
+          console.error("Error al solicitar permisos de geolocalización:", error);  
+          alert("Por favor, habilita los permisos de geolocalización en tu navegador.");  
+        }  
+      );  
+    } else {  
+      console.error("Geolocalización no soportada por este navegador.");  
+    }  
   </script>  
 </body>  
 
