@@ -173,7 +173,7 @@
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
       navigator.serviceWorker  
-        .register("/pwa/sw.js")  
+        .register("./pwa/sw.js")  
         .then((registration) => {  
           console.log("Service Worker registrado con éxito:", registration);  
         })  
