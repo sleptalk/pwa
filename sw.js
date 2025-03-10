@@ -5,7 +5,6 @@ const urlsToCache = [
 ];  
 
 let intervaloUbicacion;  
-let codigoConductorActual = null;  
 
 // Instalación del Service Worker y almacenamiento en caché  
 self.addEventListener("install", (e) => {  
@@ -50,30 +49,27 @@ self.addEventListener("fetch", (e) => {
 
 // Manejo de mensajes desde la aplicación principal  
 self.addEventListener("message", (e) => {  
-  if (e.data.action === "iniciar") {  
-    codigoConductorActual = e.data.codigo;  
+  if (e.data === "iniciar") {  
     // Iniciar la obtención de la ubicación  
-    obtenerUbicacion(codigoConductorActual); // Primera obtención  
-    intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductorActual), 20000); // Cada 20 segundos  
-  } else if (e.data.action === "detener") {  
+    intervaloUbicacion = setInterval(obtenerUbicacion, 20000); // Cada 20 segundos  
+  } else if (e.data === "detener") {  
     // Detener la obtención de la ubicación  
     clearInterval(intervaloUbicacion);  
   }  
 });  
 
 // Función para obtener la ubicación  
-function obtenerUbicacion(codigoConductor) {  
+function obtenerUbicacion() {  
   if ("geolocation" in navigator) {  
     navigator.geolocation.getCurrentPosition(  
       (position) => {  
         const latitud = position.coords.latitude;  
         const longitud = position.coords.longitude;  
-        enviarUbicacion(latitud, longitud, codigoConductor);  
+        enviarUbicacion(latitud, longitud);  
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
-      },  
-      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 } // Opciones de geolocalización  
+      }  
     );  
   } else {  
     console.error("Geolocalización no soportada por este navegador.");  
@@ -81,10 +77,10 @@ function obtenerUbicacion(codigoConductor) {
 }  
 
 // Función para enviar la ubicación al servidor  
-function enviarUbicacion(latitud, longitud, codigoConductor) {  
+function enviarUbicacion(latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
-    codigo: codigoConductor, // Usa el código del conductor  
+    codigo: "ABC123", // Reemplaza con el código del conductor  
     latitud: latitud,  
     longitud: longitud,  
   });  
