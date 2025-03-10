@@ -32,6 +32,7 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();  
 });  
 
+// API de Sincronización en Segundo Plano  
 self.addEventListener("sync", (event) => {  
   if (event.tag === "enviarUbicacion") {  
     event.waitUntil(enviarUbicacionEnSegundoPlano());  
@@ -40,14 +41,29 @@ self.addEventListener("sync", (event) => {
 
 async function enviarUbicacionEnSegundoPlano() {  
   const clients = await self.clients.matchAll();  
-  clients.forEach(client => {  
+  clients.forEach((client) => {  
+    client.postMessage({ action: "obtenerUbicacion" });  
+  });  
+}  
+
+// API de Sincronización en Segundo Plano Periódica  
+self.addEventListener("periodicsync", (event) => {  
+  if (event.tag === "actualizarUbicacion") {  
+    event.waitUntil(obtenerUbicacionPeriodica());  
+  }  
+});  
+
+async function obtenerUbicacionPeriodica() {  
+  const clients = await self.clients.matchAll();  
+  clients.forEach((client) => {  
     client.postMessage({ action: "obtenerUbicacion" });  
   });  
 }  
 
 // Función para enviar la ubicación al script de Google Apps Script  
 function enviarUbicacion(codigoConductor, latitud, longitud) {  
-  const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
+  const url =  
+    "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
     codigo: codigoConductor,  
     latitud: latitud,  
