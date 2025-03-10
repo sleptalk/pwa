@@ -52,7 +52,6 @@
 
   <script>  
     let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
-    let intervaloUbicacion; // Variable para almacenar el intervalo de actualización  
 
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
@@ -97,6 +96,7 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
+          document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -122,9 +122,6 @@
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
             obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
-
-            // Iniciar la actualización automática de la ubicación cada 20 segundos  
-            intervaloUbicacion = setInterval(obtenerUbicacion, 20000);  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
