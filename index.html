@@ -107,21 +107,11 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
-          mostrarNotificacion(latitud, longitud); // Mostrar notificación  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
           document.getElementById("mensajeUbicacion").innerText = "Error al enviar la ubicación: " + error.message;  
         });  
-    }  
-
-    // Función para mostrar notificación  
-    function mostrarNotificacion(latitud, longitud) {  
-      if ("Notification" in window && Notification.permission === "granted") {  
-        new Notification("Ubicación Actualizada", {  
-          body: `Latitud: ${latitud.toFixed(5)}, Longitud: ${longitud.toFixed(5)}`,  
-        });  
-      }  
     }  
 
     // Función para manejar el envío del código del conductor  
@@ -165,7 +155,7 @@
 
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
-      navigator.serviceWorker.register("https://slebtalk.github.io/pwa/sw.js").then((registration) => {  
+      navigator.serviceWorker.register("./sw.js").then((registration) => {  
         console.log("Service Worker registrado con éxito:", registration);  
       }).catch((error) => {  
         console.error("Error al registrar el Service Worker:", error);  
