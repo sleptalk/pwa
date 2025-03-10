@@ -9,7 +9,7 @@
   <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
 </head>  
 <body>  
-  <script src="./pwa/script.js"></script> <!-- Llama a script.js -->  
+  <script src="./script.js"></script> <!-- Llama a script.js -->  
 </body>   
       margin: 0;  
       padding: 0;  
@@ -173,7 +173,7 @@
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
       navigator.serviceWorker  
-        .register("./pwa/sw.js")  
+        .register("./sw.js")  
         .then((registration) => {  
           console.log("Service Worker registrado con éxito:", registration);  
         })  
