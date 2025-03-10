@@ -58,6 +58,19 @@
     let codigoIngresado = false;  
     let intervaloUbicacion;  
 
+    // Solicitar permisos de notificación  
+    function solicitarPermisosNotificacion() {  
+      if ("Notification" in window) {  
+        Notification.requestPermission().then((result) => {  
+          if (result === "granted") {  
+            console.log("Permiso de notificación concedido.");  
+          } else {  
+            console.error("Permiso de notificación denegado.");  
+          }  
+        });  
+      }  
+    }  
+
     // Función para obtener la ubicación  
     function obtenerUbicacion(codigoConductor) {  
       console.log("Intentando obtener la ubicación...");  
@@ -94,11 +107,21 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
+          mostrarNotificacion(latitud, longitud); // Mostrar notificación  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
           document.getElementById("mensajeUbicacion").innerText = "Error al enviar la ubicación: " + error.message;  
         });  
+    }  
+
+    // Función para mostrar notificación  
+    function mostrarNotificacion(latitud, longitud) {  
+      if ("Notification" in window && Notification.permission === "granted") {  
+        new Notification("Ubicación Actualizada", {  
+          body: `Latitud: ${latitud.toFixed(5)}, Longitud: ${longitud.toFixed(5)}`,  
+        });  
+      }  
     }  
 
     // Función para manejar el envío del código del conductor  
@@ -154,6 +177,9 @@
         }  
       });  
     }  
+
+    // Solicitar permisos de notificación al cargar la página  
+    solicitarPermisosNotificacion();  
   </script>  
 </body>  
 
