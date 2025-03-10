@@ -1,6 +1,6 @@
 const CACHE_NAME = "v1_cache_panel_adm",
   urlsToCache = [
-    "https://script.google.com/macros/s/AKfycbxV1Upno47DkZsofFvpIktELMG23LnJkgJ8LEqapQlJlDf7yJLE4Id9OdCY8To1vFg/exec",
+    "https://script.google.com/macros/s/AKfycbymw9iW4ktjqQ_o5C5bPYKd9tBrX0Gqik_KWDv6T9nSvkBFV72FxQ4wslztRmsvNIQqfw/exec",
     "./manifest.json",
   ];
 
