@@ -11,33 +11,62 @@
 </head>  
 
 <body style="margin: 0; padding: 0; height: 100vh;">  
-  <iframe  
-    src="https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec"  
-    frameborder="0" width="100%" height="100%"></iframe>  
-</body>  
+  <div id="mensajeUbicacion" style="padding: 20px; font-family: Arial, sans-serif;">  
+    Obteniendo ubicación...  
+  </div>  
 
-<script>  
-  function obtenerUbicacion() {  
-    console.log("Intentando obtener la ubicación...");  
-    if (navigator.geolocation) {  
-      navigator.geolocation.getCurrentPosition(  
-        function (position) {  
-          console.log("Ubicación obtenida:", position.coords.latitude, position.coords.longitude);  
-          // Aquí envías la ubicación al servidor  
-        },  
-        function (error) {  
-          console.error("Error al obtener la ubicación:", error.message);  
-        }  
-      );  
-    } else {  
-      console.error("Geolocalización no soportada por este navegador.");  
+  <script>  
+    // Función para obtener la ubicación  
+    function obtenerUbicacion() {  
+      console.log("Intentando obtener la ubicación...");  
+      if (navigator.geolocation) {  
+        navigator.geolocation.getCurrentPosition(  
+          function (position) {  
+            console.log("Ubicación obtenida:", position.coords.latitude, position.coords.longitude);  
+            enviarUbicacion(position.coords.latitude, position.coords.longitude);  
+          },  
+          function (error) {  
+            console.error("Error al obtener la ubicación:", error.message);  
+            document.getElementById("mensajeUbicacion").innerText = "Error al obtener la ubicación: " + error.message;  
+          }  
+        );  
+      } else {  
+        console.error("Geolocalización no soportada por este navegador.");  
+        document.getElementById("mensajeUbicacion").innerText = "Geolocalización no soportada por este navegador.";  
+      }  
     }  
-  }  
 
-  // Llama a la función para obtener la ubicación  
-  obtenerUbicacion();  
-</script>  
+    // Función para enviar la ubicación al script de Google Apps Script  
+    function enviarUbicacion(latitud, longitud) {  
+      const codigoConductor = localStorage.getItem("codigoConductor"); // Obtén el código del conductor desde localStorage  
+      if (!codigoConductor) {  
+        console.error("Código de conductor no encontrado.");  
+        document.getElementById("mensajeUbicacion").innerText = "Primero debes ingresar un código de conductor.";  
+        return;  
+      }  
 
-<script src="./script.js"></script>
+      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
+      const params = new URLSearchParams({  
+        codigo: codigoConductor,  
+        latitud: latitud,  
+        longitud: longitud  
+      });  
 
-</html>
+      fetch(url + "?" + params.toString(), {  
+        method: "GET",  
+        mode: "no-cors" // Modo no-cors para evitar problemas de CORS  
+      })  
+        .then(() => {  
+          console.log("Ubicación enviada correctamente.");  
+          document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud + " | Longitud " + longitud;  
+        })  
+        .catch((error) => {  
+          console.error("Error al enviar la ubicación:", error);  
+          document.getElementById("mensajeUbicacion").innerText = "Error al enviar la ubicación: " + error.message;  
+        });  
+    }  
+
+    // Llama a la función para obtener la ubicación al cargar la página  
+    obtenerUbicacion();  
+  </script>  
+</body>  
