@@ -36,6 +36,7 @@
     button {  
       padding: 10px;  
       cursor: pointer;  
+      margin: 5px;  
     }  
 
     #nombreChofer {  
@@ -52,6 +53,7 @@
   <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
     <button id="btnEnviar">Enviar Código</button>  
+    <button id="btnDetener" disabled>Detener Ubicación</button>  
   </div>  
 
   <script>  
@@ -64,6 +66,7 @@
           action: "iniciar",  
           codigo: codigoConductor,  
         });  
+        document.getElementById("btnDetener").disabled = false;  
       }  
     }  
 
@@ -73,6 +76,7 @@
         navigator.serviceWorker.controller.postMessage({  
           action: "detener",  
         });  
+        document.getElementById("btnDetener").disabled = true;  
       }  
     }  
 
@@ -83,6 +87,16 @@
         obtenerNombreConductor(codigoConductor);  
         iniciarUbicacionSegundoPlano(codigoConductor); // Iniciar la ubicación en segundo plano  
       }  
+    });  
+
+    // Manejar la detención manual de la ubicación  
+    document.getElementById("btnDetener").addEventListener("click", () => {  
+      detenerUbicacionSegundoPlano();  
+    });  
+
+    // Detener la ubicación cuando el usuario cierre la aplicación  
+    window.addEventListener("beforeunload", () => {  
+      detenerUbicacionSegundoPlano();  
     });  
 
     // Función para obtener el nombre del conductor  
