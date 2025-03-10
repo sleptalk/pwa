@@ -31,25 +31,25 @@ self.addEventListener("activate", (e) => {
       )  
     )  
   );  
-  self.clients.claim();  
 });  
 
 self.addEventListener("message", (e) => {  
-  if (e.data.action === "iniciar") {  
-    const codigoConductor = e.data.codigo;  
-    intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductor), 20000); // Cada 20 segundos  
-  } else if (e.data.action === "detener") {  
+  if (e.data === "iniciar") {  
+    // Iniciar la obtención de la ubicación  
+    intervaloUbicacion = setInterval(obtenerUbicacion, 20000); // Cada 20 segundos  
+  } else if (e.data === "detener") {  
+    // Detener la obtención de la ubicación  
     clearInterval(intervaloUbicacion);  
   }  
 });  
 
-function obtenerUbicacion(codigoConductor) {  
+function obtenerUbicacion() {  
   if ("geolocation" in navigator) {  
     navigator.geolocation.getCurrentPosition(  
       (position) => {  
         const latitud = position.coords.latitude;  
         const longitud = position.coords.longitude;  
-        enviarUbicacion(codigoConductor, latitud, longitud);  
+        enviarUbicacion(latitud, longitud);  
       },  
       (error) => {  
         console.error("Error al obtener la ubicación:", error);  
@@ -60,10 +60,10 @@ function obtenerUbicacion(codigoConductor) {
   }  
 }  
 
-function enviarUbicacion(codigoConductor, latitud, longitud) {  
+function enviarUbicacion(latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
-    codigo: codigoConductor,  
+    codigo: "ABC123", // Reemplaza con el código del conductor  
     latitud: latitud,  
     longitud: longitud,  
   });  
@@ -74,14 +74,6 @@ function enviarUbicacion(codigoConductor, latitud, longitud) {
   })  
     .then(() => {  
       console.log("Ubicación enviada correctamente.");  
-      self.clients.matchAll().then((clients) => {  
-        clients.forEach((client) => {  
-          client.postMessage({  
-            action: "actualizarMensaje",  
-            mensaje: `Ubicación actualizada: Latitud ${latitud.toFixed(5)} | Longitud ${longitud.toFixed(5)}`,  
-          });  
-        });  
-      });  
     })  
     .catch((error) => {  
       console.error("Error al enviar la ubicación:", error);  
