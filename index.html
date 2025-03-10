@@ -165,7 +165,7 @@
 
     // Escuchar mensajes del Service Worker  
     if ("serviceWorker" in navigator) {  
-      navigator.serviceWorker.register("./ws.js").then((registration) => {  
+      navigator.serviceWorker.register("https://slebtalk.github.io/pwa/ws.js").then((registration) => {  
         console.log("Service Worker registrado con éxito:", registration);  
       }).catch((error) => {  
         console.error("Error al registrar el Service Worker:", error);  
