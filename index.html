@@ -39,6 +39,7 @@
 
 <body>  
   <div id="mensajeUbicacion">Obteniendo ubicación...</div>  
+  <div id="nombreChofer" style="margin-top: 10px; font-weight: bold;"></div>  
 
   <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
@@ -46,6 +47,8 @@
   </div>  
 
   <script>  
+    let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
+
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
       console.log("Intentando obtener la ubicación...");  
@@ -78,8 +81,8 @@
       const url = "https://script.google.com/macros/s/AKfycbxbtyoWDfdqulykLyqWCAtcKlDeF_fPMmA-Kf3tSV9ZKBQmzBlzf3cUhyQqHEdJGaCeSA/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
-        latitud: latitud,  
-        longitud: longitud  
+        latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
+        longitud: longitud.toFixed(5) // Asegúrate de que la longitud tenga 5 decimales  
       });  
 
       fetch(url + "?" + params.toString(), {  
@@ -88,7 +91,7 @@
       })  
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
-          document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud + " | Longitud " + longitud;  
+          document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -96,10 +99,37 @@
         });  
     }  
 
-    // Llama a la función para obtener la ubicación al hacer clic en el botón  
+    // Función para manejar el envío del código del conductor  
     document.getElementById("btnEnviar").addEventListener("click", function() {  
-      obtenerUbicacion();  
+      if (!codigoIngresado) {  
+        const codigoConductor = document.getElementById("codigoConductor").value;  
+        // Aquí puedes hacer una llamada a tu script para obtener el nombre del conductor  
+        obtenerNombreConductor(codigoConductor);  
+      } else {  
+        obtenerUbicacion(); // Si el código ya fue ingresado, solo obtener la ubicación  
+      }  
     });  
+
+    // Función para obtener el nombre del conductor  
+    function obtenerNombreConductor(codigo) {  
+      const url = "https://script.google.com/macros/s/AKfycbxbtyoWDfdqulykLyqWCAtcKlDeF_fPMmA-Kf3tSV9ZKBQmzBlzf3cUhyQqHEdJGaCeSA/exec" + codigo;  
+
+      fetch(url)  
+        .then(response => response.json())  
+        .then(data => {  
+          if (data.nombre) {  
+            document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
+            codigoIngresado = true; // Marcar que el código ha sido ingresado  
+            document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
+          } else {  
+            document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
+          }  
+        })  
+        .catch(error => {  
+          console.error("Error al obtener el nombre del conductor:", error);  
+          document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
+        });  
+    }  
   </script>  
 </body>  
 
