@@ -36,39 +36,12 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("message", (e) => {  
   if (e.data.action === "iniciar") {  
-    mostrarNotificacion();  
     const codigoConductor = e.data.codigo;  
     intervaloUbicacion = setInterval(() => obtenerUbicacion(codigoConductor), 20000); // Cada 20 segundos  
   } else if (e.data.action === "detener") {  
     clearInterval(intervaloUbicacion);  
   }  
 });  
-
-self.addEventListener("sync", (event) => {  
-  if (event.tag === "enviar-ubicacion") {  
-    event.waitUntil(obtenerUbicacion());  
-  }  
-});  
-
-self.addEventListener("periodicsync", (event) => {  
-  if (event.tag === "enviar-ubicacion-periodico") {  
-    event.waitUntil(obtenerUbicacion());  
-  }  
-});  
-
-self.addEventListener("push", (event) => {  
-  const mensaje = event.data.text();  
-  self.registration.showNotification("Mensaje Push", {  
-    body: mensaje,  
-  });  
-});  
-
-function mostrarNotificacion() {  
-  self.registration.showNotification("Ubicación en segundo plano", {  
-    body: "La aplicación sigue enviando tu ubicación en segundo plano.",  
-    icon: "https://cdn-icons-png.flaticon.com/16/5868/5868632.png",  
-  });  
-}  
 
 function obtenerUbicacion(codigoConductor) {  
   if ("geolocation" in navigator) {  
