@@ -57,16 +57,16 @@
     }  
 
     // Iniciar la obtención de la ubicación  
-    function iniciarUbicacion() {  
+    function iniciarUbicacion(codigoConductor) {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
-        navigator.serviceWorker.controller.postMessage("iniciar");  
+        navigator.serviceWorker.controller.postMessage({ action: "iniciar", codigo: codigoConductor });  
       }  
     }  
 
     // Detener la obtención de la ubicación  
     function detenerUbicacion() {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
-        navigator.serviceWorker.controller.postMessage("detener");  
+        navigator.serviceWorker.controller.postMessage({ action: "detener" });  
       }  
     }  
 
@@ -79,7 +79,7 @@
         .then(data => {  
           if (data.nombre) {  
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
-            iniciarUbicacion(); // Iniciar la ubicación después de obtener el nombre  
+            iniciarUbicacion(codigo); // Iniciar la ubicación después de obtener el nombre  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
@@ -99,4 +99,4 @@
     });  
   </script>  
 </body>  
-</html> 
+</html>  
