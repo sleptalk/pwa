@@ -53,12 +53,9 @@
   <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
     <button id="btnEnviar">Enviar Código</button>  
-    <button id="btnDetener">Detener Ubicación</button>  
   </div>  
 
   <script>  
-    let codigoIngresado = false;  
-
     // Función para iniciar la obtención de la ubicación en segundo plano  
     function iniciarUbicacionSegundoPlano(codigoConductor) {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
@@ -69,49 +66,13 @@
       }  
     }  
 
-    // Función para detener la obtención de la ubicación en segundo plano  
-    function detenerUbicacionSegundoPlano() {  
-      if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
-        navigator.serviceWorker.controller.postMessage({  
-          action: "detener",  
-        });  
-      }  
-    }  
-
     // Manejar el envío del código del conductor  
     document.getElementById("btnEnviar").addEventListener("click", () => {  
       const codigoConductor = document.getElementById("codigoConductor").value;  
       if (codigoConductor) {  
-        obtenerNombreConductor(codigoConductor);  
-        iniciarUbicacionSegundoPlano(codigoConductor); // Iniciar la ubicación en segundo plano  
+        iniciarUbicacionSegundoPlano(codigoConductor);  
       }  
     });  
-
-    // Manejar la detención de la ubicación  
-    document.getElementById("btnDetener").addEventListener("click", () => {  
-      detenerUbicacionSegundoPlano();  
-    });  
-
-    // Función para obtener el nombre del conductor  
-    function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" + codigo;  
-
-      fetch(url)  
-        .then((response) => response.json())  
-        .then((data) => {  
-          if (data.nombre) {  
-            document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
-            codigoIngresado = true;  
-            document.getElementById("codigoConductor").disabled = true;  
-          } else {  
-            document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
-          }  
-        })  
-        .catch((error) => {  
-          console.error("Error al obtener el nombre del conductor:", error);  
-          document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
-        });  
-    }  
 
     // Escuchar mensajes del Service Worker  
     navigator.serviceWorker.addEventListener("message", (event) => {  
@@ -119,6 +80,18 @@
         document.getElementById("mensajeUbicacion").innerText = event.data.mensaje;  
       }  
     });  
+
+    // Registrar el Service Worker  
+    if ("serviceWorker" in navigator) {  
+      navigator.serviceWorker  
+        .register("/sw.js")  
+        .then((registration) => {  
+          console.log("Service Worker registrado con éxito:", registration);  
+        })  
+        .catch((error) => {  
+          console.error("Error al registrar el Service Worker:", error);  
+        });  
+    }  
   </script>  
 </body>  
 
