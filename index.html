@@ -52,6 +52,7 @@
 
   <script>  
     let codigoIngresado = false; // Variable para verificar si el código ya fue ingresado  
+    let intervaloUbicacion; // Variable para almacenar el intervalo de actualización de ubicación  
 
     // Función para obtener la ubicación  
     function obtenerUbicacion() {  
@@ -122,6 +123,9 @@
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
             obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
+
+            // Iniciar la actualización de ubicación cada 20 segundos  
+            intervaloUbicacion = setInterval(obtenerUbicacion, 20000);  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
