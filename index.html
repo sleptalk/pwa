@@ -82,7 +82,7 @@
         return;  
       }  
 
-      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec";  
+      const url = "https://script.google.com/macros/s/AKfycby9yGwf-bMSnwJg5j-XedzxuQV01pSJ9zkAwI1CHtttntQ6FAE9yxwcZwYcTu6ddmoI3w/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud.toFixed(5), // Asegúrate de que la latitud tenga 5 decimales  
@@ -112,7 +112,7 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec?codigo=" + codigo;  
+      const url = "https://script.google.com/macros/s/AKfycby9yGwf-bMSnwJg5j-XedzxuQV01pSJ9zkAwI1CHtttntQ6FAE9yxwcZwYcTu6ddmoI3w/exec?codigo=" + codigo;  
 
       fetch(url)  
         .then(response => response.json())  
