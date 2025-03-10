@@ -1,4 +1,4 @@
-!DOCTYPE html>  
+<!DOCTYPE html>  
 <html lang="es">  
 
 <head>  
@@ -56,7 +56,6 @@
 
   <script>  
     let codigoIngresado = false;  
-    let intervaloUbicacion;  
 
     // Solicitar permisos de notificación  
     function solicitarPermisosNotificacion() {  
@@ -73,11 +72,9 @@
 
     // Función para obtener la ubicación  
     function obtenerUbicacion(codigoConductor) {  
-      console.log("Intentando obtener la ubicación...");  
       if (navigator.geolocation) {  
         navigator.geolocation.getCurrentPosition(  
           function (position) {  
-            console.log("Ubicación obtenida:", position.coords.latitude, position.coords.longitude);  
             enviarUbicacion(position.coords.latitude, position.coords.longitude, codigoConductor);  
           },  
           function (error) {  
@@ -96,7 +93,7 @@
       const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
-        latitud: latitud,   
+        latitud: latitud,  
         longitud: longitud  
       });  
 
@@ -107,7 +104,7 @@
         .then(() => {  
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
-          mostrarNotificacion(latitud, longitud); // Mostrar notificación  
+          mostrarNotificacion(latitud, longitud);  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -125,7 +122,7 @@
     }  
 
     // Función para manejar el envío del código del conductor  
-    document.getElementById("btnEnviar").addEventListener("click", function() {  
+    document.getElementById("btnEnviar").addEventListener("click", function () {  
       const codigoConductor = document.getElementById("codigoConductor").value;  
       obtenerNombreConductor(codigoConductor);  
     });  
@@ -144,7 +141,7 @@
             obtenerUbicacion(codigo); // Obtener la ubicación después de ingresar el código  
 
             // Iniciar la actualización de ubicación cada 20 segundos  
-            intervaloUbicacion = setInterval(() => {  
+            setInterval(() => {  
               obtenerUbicacion(codigo);  
               // Registrar el evento de sincronización  
               if ("serviceWorker" in navigator && "SyncManager" in window) {  
