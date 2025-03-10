@@ -4,8 +4,6 @@ const urlsToCache = [
   "./manifest.json",  
 ];  
 
-let intervaloUbicacion;  
-
 self.addEventListener("install", (e) => {  
   e.waitUntil(  
     caches  
@@ -47,22 +45,7 @@ async function enviarUbicacionEnSegundoPlano() {
   });  
 }  
 
-self.addEventListener("message", (e) => {  
-  if (e.data.action === "iniciar") {  
-    const codigoConductor = e.data.codigo;  
-    intervaloUbicacion = setInterval(() => {  
-      // Aquí solo se envía un mensaje para que la página obtenga la ubicación  
-      self.clients.matchAll().then((clients) => {  
-        clients.forEach((client) => {  
-          client.postMessage({ action: "obtenerUbicacion", codigo: codigoConductor });  
-        });  
-      });  
-    }, 20000); // Cada 20 segundos  
-  } else if (e.data.action === "detener") {  
-    clearInterval(intervaloUbicacion);  
-  }  
-});  
-
+// Función para enviar la ubicación al script de Google Apps Script  
 function enviarUbicacion(codigoConductor, latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
