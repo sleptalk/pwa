@@ -34,6 +34,19 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();  
 });  
 
+self.addEventListener("sync", (event) => {  
+  if (event.tag === "enviarUbicacion") {  
+    event.waitUntil(enviarUbicacionEnSegundoPlano());  
+  }  
+});  
+
+async function enviarUbicacionEnSegundoPlano() {  
+  const clients = await self.clients.matchAll();  
+  clients.forEach(client => {  
+    client.postMessage({ action: "obtenerUbicacion" });  
+  });  
+}  
+
 self.addEventListener("message", (e) => {  
   if (e.data.action === "iniciar") {  
     const codigoConductor = e.data.codigo;  
