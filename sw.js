@@ -6,6 +6,7 @@ const urlsToCache = [
 
 let intervaloUbicacion;  
 
+// Instalación del Service Worker y almacenamiento en caché  
 self.addEventListener("install", (e) => {  
   e.waitUntil(  
     caches  
@@ -13,10 +14,11 @@ self.addEventListener("install", (e) => {
       .then((cache) => {  
         return cache.addAll(urlsToCache).then(() => self.skipWaiting());  
       })  
-      .catch((err) => console.error("Fallo el registro del cache", err))  
+      .catch((err) => console.error("Fallo el registro del cache ", err))  
   );  
 });  
 
+// Activación del Service Worker y limpieza de caché antiguo  
 self.addEventListener("activate", (e) => {  
   const cacheWhitelist = [CACHE_NAME];  
 
@@ -33,6 +35,19 @@ self.addEventListener("activate", (e) => {
   );  
 });  
 
+// Manejo de solicitudes de red  
+self.addEventListener("fetch", (e) => {  
+  e.respondWith(  
+    caches.match(e.request).then((res) => {  
+      if (res) {  
+        return res;  
+      }  
+      return fetch(e.request);  
+    })  
+  );  
+});  
+
+// Manejo de mensajes desde la aplicación principal  
 self.addEventListener("message", (e) => {  
   if (e.data === "iniciar") {  
     // Iniciar la obtención de la ubicación  
@@ -43,6 +58,7 @@ self.addEventListener("message", (e) => {
   }  
 });  
 
+// Función para obtener la ubicación  
 function obtenerUbicacion() {  
   if ("geolocation" in navigator) {  
     navigator.geolocation.getCurrentPosition(  
@@ -60,6 +76,7 @@ function obtenerUbicacion() {
   }  
 }  
 
+// Función para enviar la ubicación al servidor  
 function enviarUbicacion(latitud, longitud) {  
   const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
