@@ -48,8 +48,14 @@
     <button id="btnEnviar">Enviar Código</button>  
   </div>  
 
-  <script src="./script.js"></script>  
   <script>  
+    // Registrar el Service Worker  
+    if ("serviceWorker" in navigator) {  
+      navigator.serviceWorker.register("./ws.js")  
+        .then(() => console.log("Service Worker registrado correctamente."))  
+        .catch((error) => console.error("Error al registrar el Service Worker:", error));  
+    }  
+
     // Iniciar la obtención de la ubicación  
     function iniciarUbicacion() {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
@@ -64,11 +70,12 @@
       }  
     }  
 
-    // Ejemplo: Iniciar la ubicación al ingresar el código del conductor  
+    // Manejar el envío del código del conductor  
     document.getElementById("btnEnviar").addEventListener("click", () => {  
       const codigoConductor = document.getElementById("codigoConductor").value;  
       if (codigoConductor) {  
         iniciarUbicacion();  
+        document.getElementById("nombreChofer").innerText = "Código ingresado: " + codigoConductor;  
       }  
     });  
   </script>  
