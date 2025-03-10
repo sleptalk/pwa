@@ -97,7 +97,6 @@
           console.log("Ubicación enviada correctamente.");  
           document.getElementById("mensajeUbicacion").innerText = "Ubicación actualizada: Latitud " + latitud.toFixed(5) + " | Longitud " + longitud.toFixed(5);  
           document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
-          document.getElementById("nombreChofer").innerText = "Chofer: " + codigoConductor; // Mostrar el nombre del chofer  
         })  
         .catch((error) => {  
           console.error("Error al enviar la ubicación:", error);  
@@ -107,16 +106,12 @@
 
     // Función para manejar el envío del código del conductor  
     document.getElementById("btnEnviar").addEventListener("click", function() {  
-      if (!codigoIngresado) {  
-        const codigoConductor = document.getElementById("codigoConductor").value;  
-        obtenerConductor(codigoConductor);  
-      } else {  
-        obtenerUbicacion(); // Si el código ya fue ingresado, solo obtener la ubicación  
-      }  
+      const codigoConductor = document.getElementById("codigoConductor").value;  
+      obtenerNombreConductor(codigoConductor);  
     });  
 
-    // Función para obtener el conductor según el código  
-    function obtenerConductor(codigo) {  
+    // Función para obtener el nombre del conductor  
+    function obtenerNombreConductor(codigo) {  
       const url = "https://script.google.com/macros/s/AKfycbxw0NjO6hogbu5GiluKiiG97KBVpS7b1uqhYsH0q-sVFf2kpreOXJa-_k78W7XV3ukKxw/exec?codigo=" + codigo;  
 
       fetch(url)  
@@ -126,7 +121,6 @@
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
             codigoIngresado = true; // Marcar que el código ha sido ingresado  
             document.getElementById("codigoConductor").disabled = true; // Desactivar el campo de entrada  
-            document.getElementById("formulario").style.display = "none"; // Ocultar el formulario  
             obtenerUbicacion(); // Obtener la ubicación después de ingresar el código  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
