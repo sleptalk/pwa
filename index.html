@@ -51,21 +51,16 @@
   <script src="./script.js"></script>  
   <script>  
     // Iniciar la obtención de la ubicación  
-    function iniciarUbicacion(codigoConductor) {  
+    function iniciarUbicacion() {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
-        navigator.serviceWorker.controller.postMessage({  
-          action: "iniciar",  
-          codigo: codigoConductor,  
-        });  
+        navigator.serviceWorker.controller.postMessage("iniciar");  
       }  
     }  
 
     // Detener la obtención de la ubicación  
     function detenerUbicacion() {  
       if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {  
-        navigator.serviceWorker.controller.postMessage({  
-          action: "detener",  
-        });  
+        navigator.serviceWorker.controller.postMessage("detener");  
       }  
     }  
 
@@ -73,7 +68,7 @@
     document.getElementById("btnEnviar").addEventListener("click", () => {  
       const codigoConductor = document.getElementById("codigoConductor").value;  
       if (codigoConductor) {  
-        iniciarUbicacion(codigoConductor);  
+        iniciarUbicacion();  
       }  
     });  
   </script>  
