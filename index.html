@@ -112,7 +112,7 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url = "https://script.google.com/macros/s/AKfycbwBEh8OtdU9pJLSkwOlCUAdlgQ3-ygoYp7SkQjiffoDhV9Lzc037B5rmPZDl6KOW9fAjw/exec?codigo=" + codigo;  
+      const url = "https://script.google.com/macros/s/AKfycbwBEh8OtdU9pJLSkwOlCUAdlgQ3-ygoYp7SkQjiffoDhV9Lzc037B5rmPZDl6KOW9fAjw/exec" + codigo;  
 
       fetch(url)  
         .then(response => response.json())  
