@@ -52,6 +52,7 @@
   <div id="formulario">  
     <input type="text" id="codigoConductor" placeholder="Ingrese el código del conductor">  
     <button id="btnEnviar">Enviar Código</button>  
+    <button id="btnDetener" style="display:none;">Detener Ubicación</button>  
   </div>  
 
   <script>  
@@ -81,7 +82,6 @@
       const codigoConductor = document.getElementById("codigoConductor").value;  
       if (codigoConductor) {  
         obtenerNombreConductor(codigoConductor);  
-        iniciarUbicacionSegundoPlano(codigoConductor); // Iniciar la ubicación en segundo plano  
       }  
     });  
 
@@ -96,6 +96,8 @@
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
             codigoIngresado = true;  
             document.getElementById("codigoConductor").disabled = true;  
+            iniciarUbicacionSegundoPlano(codigo); // Iniciar la ubicación en segundo plano  
+            document.getElementById("btnDetener").style.display = "block"; // Mostrar botón de detener  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
@@ -105,6 +107,14 @@
           document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
         });  
     }  
+
+    // Manejar el botón de detener  
+    document.getElementById("btnDetener").addEventListener("click", () => {  
+      detenerUbicacionSegundoPlano();  
+      document.getElementById("btnDetener").style.display = "none"; // Ocultar botón de detener  
+      document.getElementById("codigoConductor").disabled = false; // Habilitar el campo de código  
+      document.getElementById("nombreChofer").innerText = ""; // Limpiar el nombre del chofer  
+    });  
 
     // Escuchar mensajes del Service Worker  
     navigator.serviceWorker.addEventListener("message", (event) => {  
