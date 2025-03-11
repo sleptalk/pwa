@@ -142,7 +142,7 @@
             if (intervaloUbicacion) clearInterval(intervaloUbicacion);  
             intervaloUbicacion = setInterval(() => {  
               obtenerUbicacion(codigo);  
-            }, 30000); // 30 segundos  
+            }, 15000); // 30 segundos  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
