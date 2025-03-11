@@ -9,7 +9,7 @@ if ("serviceWorker" in navigator) {
 }  
 
 // Variables globales  
-let codigoIngresado = false;  // Asegúrate de que esta línea solo aparezca una vez  
+let codigoIngresado = false;  
 let intervaloUbicacion;  
 
 // Solicitar permisos de notificación  
@@ -47,6 +47,13 @@ function obtenerUbicacion(codigoConductor) {
 document.getElementById("btnEnviar").addEventListener("click", function () {  
   const codigoConductor = document.getElementById("codigoConductor").value;  
   obtenerNombreConductor(codigoConductor);  
+
+  // Enviar el código al Service Worker  
+  if ("serviceWorker" in navigator) {  
+    navigator.serviceWorker.ready.then((registration) => {  
+      registration.active.postMessage({ action: "setCodigoConductor", codigo: codigoConductor });  
+    });  
+  }  
 });  
 
 // Función para obtener el nombre del conductor  
