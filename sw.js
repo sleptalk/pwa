@@ -39,10 +39,11 @@ self.addEventListener("sync", (event) => {
   }  
 });  
 
-async function enviarUbicacionEnSegundoPlano() {  
-  const clients = await self.clients.matchAll();  
-  clients.forEach((client) => {  
-    client.postMessage({ action: "obtenerUbicacion" });  
+function enviarUbicacionEnSegundoPlano() {  
+  return self.clients.matchAll().then((clients) => {  
+    clients.forEach((client) => {  
+      client.postMessage({ action: "obtenerUbicacion" });  
+    });  
   });  
 }  
 
@@ -53,15 +54,30 @@ self.addEventListener("periodicsync", (event) => {
   }  
 });  
 
-async function obtenerUbicacionPeriodica() {  
-  const clients = await self.clients.matchAll();  
-  clients.forEach((client) => {  
-    client.postMessage({ action: "obtenerUbicacion" });  
+function obtenerUbicacionPeriodica() {  
+  return self.clients.matchAll().then((clients) => {  
+    clients.forEach((client) => {  
+      client.postMessage({ action: "obtenerUbicacion" });  
+    });  
   });  
 }  
 
+// Escuchar mensajes del cliente para obtener la ubicación  
+self.addEventListener("message", (event) => {  
+  if (event.data.action === "obtenerUbicacion") {  
+    const codigoConductor = event.data.codigo; // Asegúrate de enviar el código desde el cliente  
+
+    // Aquí debes obtener la latitud y longitud de alguna manera  
+    // Por ejemplo, podrías almacenar la última ubicación en IndexedDB o en memoria  
+    const latitud = 0; // Reemplaza con la lógica para obtener la latitud  
+    const longitud = 0; // Reemplaza con la lógica para obtener la longitud  
+
+    enviarUbicacion(codigoConductor, latitud, longitud);  
+  }  
+});  
+
 // Función para enviar la ubicación al script de Google Apps Script  
-async function enviarUbicacion(codigoConductor, latitud, longitud) {  
+function enviarUbicacion(codigoConductor, latitud, longitud) {  
   const url =  
     "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
@@ -85,19 +101,6 @@ async function enviarUbicacion(codigoConductor, latitud, longitud) {
       console.error("Error al enviar la ubicación:", error);  
     });  
 }  
-
-// Escuchar mensajes del cliente para obtener la ubicación  
-self.addEventListener("message", (event) => {  
-  if (event.data.action === "obtenerUbicacion") {  
-    // Aquí debes obtener el código del conductor y la ubicación  
-    const codigoConductor = event.data.codigo; // Asegúrate de enviar el código desde el cliente  
-    // Aquí debes obtener la latitud y longitud de alguna manera  
-    // Por ejemplo, podrías almacenar la última ubicación en IndexedDB o en memoria  
-    const latitud = ...; // Obtener la latitud  
-    const longitud = ...; // Obtener la longitud  
-    enviarUbicacion(codigoConductor, latitud, longitud);  
-  }  
-});  
 
 // Función para mostrar notificación  
 function mostrarNotificacion(latitud, longitud) {  
