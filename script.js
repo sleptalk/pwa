@@ -12,19 +12,6 @@ if ("serviceWorker" in navigator) {
 let codigoIngresado = false;  
 let intervaloUbicacion;  
 
-// Solicitar permisos de notificación  
-function solicitarPermisosNotificacion() {  
-  if ("Notification" in window) {  
-    Notification.requestPermission().then((result) => {  
-      if (result === "granted") {  
-        console.log("Permiso de notificación concedido.");  
-      } else {  
-        console.error("Permiso de notificación denegado.");  
-      }  
-    });  
-  }  
-}  
-
 // Función para obtener la ubicación  
 function obtenerUbicacion(codigoConductor) {  
   if (navigator.geolocation) {  
@@ -68,18 +55,11 @@ function obtenerNombreConductor(codigo) {
         codigoIngresado = true;  
         document.getElementById("codigoConductor").disabled = true;  
 
-        // Registrar la sincronización en segundo plano  
-        if ("serviceWorker" in navigator && "SyncManager" in window) {  
-          navigator.serviceWorker.ready.then((registration) => {  
-            registration.sync.register("enviarUbicacion");  
-          });  
-        }  
-
-        // Iniciar el envío de ubicación cada 30 segundos  
+        // Iniciar el envío de ubicación cada 20 segundos  
         if (intervaloUbicacion) clearInterval(intervaloUbicacion);  
         intervaloUbicacion = setInterval(() => {  
           obtenerUbicacion(codigo);  
-        }, 15000); // 30 segundos  
+        }, 20000); // 20 segundos  
       } else {  
         document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
       }  
@@ -89,6 +69,3 @@ function obtenerNombreConductor(codigo) {
       document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
     });  
 }  
-
-// Solicitar permisos de notificación al cargar la página  
-solicitarPermisosNotificacion();  
