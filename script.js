@@ -1,3 +1,48 @@
+// Registrar el Service Worker  
+if ("serviceWorker" in navigator) {  
+  navigator.serviceWorker  
+    .register("./sw.js")  
+    .then((reg) => console.log("Registro de SW exitoso ", reg))  
+    .catch((err) => console.error("Error al tratar de registrar el SW ", err));  
+} else {  
+  console.log("no hay serviceWorker");  
+}  
+
+// Variables globales  
+let codigoIngresado = false;  
+let intervaloUbicacion;  
+
+// Solicitar permisos de notificación  
+function solicitarPermisosNotificacion() {  
+  if ("Notification" in window) {  
+    Notification.requestPermission().then((result) => {  
+      if (result === "granted") {  
+        console.log("Permiso de notificación concedido.");  
+      } else {  
+        console.error("Permiso de notificación denegado.");  
+      }  
+    });  
+  }  
+}  
+
+// Función para obtener la ubicación  
+function obtenerUbicacion(codigoConductor) {  
+  if (navigator.geolocation) {  
+    navigator.geolocation.getCurrentPosition(  
+      function (position) {  
+        enviarUbicacion(position.coords.latitude, position.coords.longitude, codigoConductor);  
+      },  
+      function (error) {  
+        console.error("Error al obtener la ubicación:", error.message);  
+        document.getElementById("mensajeUbicacion").innerText = "Error al obtener la ubicación: " + error.message;  
+      }  
+    );  
+  } else {  
+    console.error("Geolocalización no soportada por este navegador.");  
+    document.getElementById("mensajeUbicacion").innerText = "Geolocalización no soportada por este navegador.";  
+  }  
+}  
+
 // Función para manejar el envío del código del conductor  
 document.getElementById("btnEnviar").addEventListener("click", function () {  
   const codigoConductor = document.getElementById("codigoConductor").value;  
@@ -27,7 +72,7 @@ function obtenerNombreConductor(codigo) {
         if (intervaloUbicacion) clearInterval(intervaloUbicacion);  
         intervaloUbicacion = setInterval(() => {  
           obtenerUbicacion(codigo);  
-        }, 15000); // 15 segundos  
+        }, 30000); // 30 segundos  
       } else {  
         document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
       }  
@@ -37,3 +82,6 @@ function obtenerNombreConductor(codigo) {
       document.getElementById("mensajeUbicacion").innerText = "Error al obtener el nombre del conductor.";  
     });  
 }  
+
+// Solicitar permisos de notificación al cargar la página  
+solicitarPermisosNotificacion();  
