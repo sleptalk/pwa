@@ -35,44 +35,43 @@ self.addEventListener("activate", (e) => {
 // API de Sincronización en Segundo Plano  
 self.addEventListener("sync", (event) => {  
   if (event.tag === "enviarUbicacion") {  
-    event.waitUntil(enviarUbicacionEnSegundoPlano());  
+    event.waitUntil(obtenerUbicacionEnSegundoPlano());  
   }  
 });  
 
-function enviarUbicacionEnSegundoPlano() {  
-  return self.clients.matchAll().then((clients) => {  
-    clients.forEach((client) => {  
-      client.postMessage({ action: "obtenerUbicacion" });  
-    });  
-  });  
-}  
-
-// API de Sincronización en Segundo Plano Periódica  
-self.addEventListener("periodicsync", (event) => {  
-  if (event.tag === "actualizarUbicacion") {  
-    event.waitUntil(obtenerUbicacionPeriodica());  
-  }  
-});  
-
-function obtenerUbicacionPeriodica() {  
-  return self.clients.matchAll().then((clients) => {  
-    clients.forEach((client) => {  
-      client.postMessage({ action: "obtenerUbicacion" });  
-    });  
+// Función para obtener la ubicación en segundo plano  
+async function obtenerUbicacionEnSegundoPlano() {  
+  const clients = await self.clients.matchAll();  
+  clients.forEach((client) => {  
+    client.postMessage({ action: "obtenerUbicacion", codigo: client.codigoConductor });  
   });  
 }  
 
 // Escuchar mensajes del cliente para obtener la ubicación  
 self.addEventListener("message", (event) => {  
   if (event.data.action === "obtenerUbicacion") {  
-    const codigoConductor = event.data.codigo; // Asegúrate de enviar el código desde el cliente  
+    const codigoConductor = event.data.codigo;  
 
-    // Aquí debes obtener la latitud y longitud de alguna manera  
-    // Por ejemplo, podrías almacenar la última ubicación en IndexedDB o en memoria  
-    const latitud = 0; // Reemplaza con la lógica para obtener la latitud  
-    const longitud = 0; // Reemplaza con la lógica para obtener la longitud  
+    // Obtener la ubicación  
+    if (navigator.geolocation) {  
+      navigator.geolocation.getCurrentPosition(  
+        (position) => {  
+          const latitud = position.coords.latitude;  
+          const longitud = position.coords.longitude;  
+          enviarUbicacion(codigoConductor, latitud, longitud);  
+        },  
+        (error) => {  
+          console.error("Error al obtener la ubicación:", error.message);  
+        }  
+      );  
+    } else {  
+      console.error("Geolocalización no soportada por este navegador.");  
+    }  
+  }  
 
-    enviarUbicacion(codigoConductor, latitud, longitud);  
+  // Almacenar el código del conductor en el cliente  
+  if (event.data.action === "setCodigoConductor") {  
+    client.codigoConductor = event.data.codigo; // Almacena el código en el cliente  
   }  
 });  
 
