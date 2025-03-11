@@ -76,19 +76,8 @@ function enviarUbicacion(latitud, longitud) {
         throw new Error("Error en la respuesta del servidor: " + response.statusText);  
       }  
       console.log("Ubicación enviada correctamente.");  
-      mostrarNotificacion(latitud, longitud); // Mostrar notificación  
     })  
     .catch((error) => {  
       console.error("Error al enviar la ubicación:", error);  
     });  
-}  
-
-// Función para mostrar notificación  
-function mostrarNotificacion(latitud, longitud) {  
-  const title = "Ubicación Actualizada";  
-  const options = {  
-    body: `Latitud: ${latitud.toFixed(5)}, Longitud: ${longitud.toFixed(5)}`,  
-  };  
-
-  self.registration.showNotification(title, options);  
 }  
