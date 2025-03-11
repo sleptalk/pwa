@@ -71,7 +71,7 @@ self.addEventListener("message", (event) => {
 
   // Almacenar el código del conductor en el cliente  
   if (event.data.action === "setCodigoConductor") {  
-    client.codigoConductor = event.data.codigo; // Almacena el código en el cliente  
+    event.source.codigoConductor = event.data.codigo; // Almacena el código en el cliente  
   }  
 });  
 
