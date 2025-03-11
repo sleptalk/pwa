@@ -52,9 +52,28 @@
     <button id="btnEnviar">Enviar Código</button>  
   </div>  
 
-  <script src="./script.js"></script> <!-- Llama a script.js -->  
+  <script src="./script.js"></script>  
   <script>  
-   
+    // Solicitar permisos de ubicación  
+    function solicitarPermisosUbicacion() {  
+      if ("geolocation" in navigator) {  
+        navigator.permissions.query({ name: "geolocation" }).then((result) => {  
+          if (result.state === "granted") {  
+            console.log("Permiso de ubicación concedido.");  
+          } else if (result.state === "prompt") {  
+            navigator.geolocation.getCurrentPosition(  
+              () => console.log("Permiso de ubicación concedido."),  
+              (error) => console.error("Permiso de ubicación denegado:", error.message)  
+            );  
+          } else {  
+            console.error("Permiso de ubicación denegado.");  
+          }  
+        });  
+      } else {  
+        console.error("Geolocalización no soportada por este navegador.");  
+      }  
+    }  
+
     // Solicitar permisos de notificación  
     function solicitarPermisosNotificacion() {  
       if ("Notification" in window) {  
@@ -138,11 +157,11 @@
             codigoIngresado = true;  
             document.getElementById("codigoConductor").disabled = true;  
 
-            // Iniciar el envío de ubicación cada 30 segundos  
+            // Iniciar el envío de ubicación cada 20 segundos  
             if (intervaloUbicacion) clearInterval(intervaloUbicacion);  
             intervaloUbicacion = setInterval(() => {  
               obtenerUbicacion(codigo);  
-            }, 15000); // 30 segundos  
+            }, 20000); // 20 segundos  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
@@ -171,7 +190,8 @@
       });  
     }  
 
-    // Solicitar permisos de notificación al cargar la página  
+    // Solicitar permisos al cargar la página  
+    solicitarPermisosUbicacion();  
     solicitarPermisosNotificacion();  
   </script>  
 </body>  
