@@ -55,6 +55,7 @@
   <script src="./script.js"></script> <!-- Llama a script.js -->  
   <script>  
     let codigoIngresado = false;  
+    let intervaloUbicacion;  
 
     // Solicitar permisos de notificación  
     function solicitarPermisosNotificacion() {  
@@ -138,23 +139,12 @@
             document.getElementById("nombreChofer").innerText = "Chofer: " + data.nombre;  
             codigoIngresado = true;  
             document.getElementById("codigoConductor").disabled = true;  
-            obtenerUbicacion(codigo); // Obtener la ubicación después de ingresar el código  
 
-            // Registrar la sincronización en segundo plano  
-            if ("serviceWorker" in navigator && "SyncManager" in window) {  
-              navigator.serviceWorker.ready.then((registration) => {  
-                registration.sync.register("enviarUbicacion");  
-              });  
-            }  
-
-            // Registrar la sincronización periódica  
-            if ("serviceWorker" in navigator && "PeriodicSyncManager" in window) {  
-              navigator.serviceWorker.ready.then((registration) => {  
-                registration.periodicSync.register("actualizarUbicacion", {  
-                  minInterval: 24 * 60 * 60 * 1000, // Cada 24 horas  
-                });  
-              });  
-            }  
+            // Iniciar el envío de ubicación cada 30 segundos  
+            if (intervaloUbicacion) clearInterval(intervaloUbicacion);  
+            intervaloUbicacion = setInterval(() => {  
+              obtenerUbicacion(codigo);  
+            }, 30000); // 30 segundos  
           } else {  
             document.getElementById("mensajeUbicacion").innerText = "Código no encontrado.";  
           }  
