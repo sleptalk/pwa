@@ -7,10 +7,8 @@
   <title>Panel de administración</title>  
   <link rel="manifest" href="./manifest.json">  
   <link rel="shortcut icon" href="https://cdn-icons-png.flaticon.com/16/5868/5868632.png" type="image/x-icon">  
-</head>  
-<body>  
-  <script src="./script.js"></script> <!-- Llama a script.js -->  
-</body>   
+  <style>  
+    body {  
       margin: 0;  
       padding: 0;  
       height: 100vh;  
@@ -45,7 +43,6 @@
     }  
   </style>  
 </head>  
-
 <body>  
   <div id="mensajeUbicacion">Obteniendo ubicación...</div>  
   <div id="nombreChofer"></div>  
@@ -55,6 +52,7 @@
     <button id="btnEnviar">Enviar Código</button>  
   </div>  
 
+  <script src="./script.js"></script> <!-- Llama a script.js -->  
   <script>  
     let codigoIngresado = false;  
 
@@ -91,8 +89,7 @@
 
     // Función para enviar la ubicación al script de Google Apps Script  
     function enviarUbicacion(latitud, longitud, codigoConductor) {  
-      const url =  
-        "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
+      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
       const params = new URLSearchParams({  
         codigo: codigoConductor,  
         latitud: latitud,  
@@ -132,9 +129,7 @@
 
     // Función para obtener el nombre del conductor  
     function obtenerNombreConductor(codigo) {  
-      const url =  
-        "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" +  
-        codigo;  
+      const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec?codigo=" + codigo;  
 
       fetch(url)  
         .then((response) => response.json())  
@@ -192,5 +187,4 @@
     solicitarPermisosNotificacion();  
   </script>  
 </body>  
-
 </html>  
