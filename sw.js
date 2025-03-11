@@ -32,55 +32,37 @@ self.addEventListener("activate", (e) => {
   self.clients.claim();  
 });  
 
-// API de Sincronización en Segundo Plano  
-self.addEventListener("sync", (event) => {  
-  if (event.tag === "enviarUbicacion") {  
-    event.waitUntil(obtenerUbicacionEnSegundoPlano());  
+// Definir la geofence que cubre Tacna, Arica y Azapa  
+const geofence = {  
+  id: "tacna-arica-azapa",  
+  latitude: -18.4783, // Latitud central (aproximada entre Tacna y Arica)  
+  longitude: -70.3125, // Longitud central (aproximada entre Tacna y Arica)  
+  radius: 50000, // Radio de 50 km para cubrir las áreas  
+};  
+
+// Escuchar la notificación de entrada a la geofence  
+self.addEventListener("geofenceenter", (event) => {  
+  const geofenceId = event.geofenceId;  
+
+  if (geofenceId === geofence.id) {  
+    // Obtener la ubicación actual del usuario  
+    navigator.geolocation.getCurrentPosition(  
+      (position) => {  
+        const latitud = position.coords.latitude;  
+        const longitud = position.coords.longitude;  
+        enviarUbicacion(latitud, longitud);  
+      },  
+      (error) => {  
+        console.error("Error al obtener la ubicación:", error.message);  
+      }  
+    );  
   }  
 });  
 
-// Función para obtener la ubicación en segundo plano  
-async function obtenerUbicacionEnSegundoPlano() {  
-  const clients = await self.clients.matchAll();  
-  clients.forEach((client) => {  
-    client.postMessage({ action: "obtenerUbicacion", codigo: client.codigoConductor });  
-  });  
-}  
-
-// Escuchar mensajes del cliente para obtener la ubicación  
-self.addEventListener("message", (event) => {  
-  if (event.data.action === "obtenerUbicacion") {  
-    const codigoConductor = event.data.codigo;  
-
-    // Obtener la ubicación  
-    if (navigator.geolocation) {  
-      navigator.geolocation.getCurrentPosition(  
-        (position) => {  
-          const latitud = position.coords.latitude;  
-          const longitud = position.coords.longitude;  
-          enviarUbicacion(codigoConductor, latitud, longitud);  
-        },  
-        (error) => {  
-          console.error("Error al obtener la ubicación:", error.message);  
-        }  
-      );  
-    } else {  
-      console.error("Geolocalización no soportada por este navegador.");  
-    }  
-  }  
-
-  // Almacenar el código del conductor en el cliente  
-  if (event.data.action === "setCodigoConductor") {  
-    event.source.codigoConductor = event.data.codigo; // Almacena el código en el cliente  
-  }  
-});  
-
-// Función para enviar la ubicación al script de Google Apps Script  
-function enviarUbicacion(codigoConductor, latitud, longitud) {  
-  const url =  
-    "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
+// Función para enviar la ubicación al servidor  
+function enviarUbicacion(latitud, longitud) {  
+  const url = "https://script.google.com/macros/s/AKfycbx_kg6MTahza8LJ6USXH6DMk15cE19U39IeNuXgslHdQL5zGqiW-5FIBt6gjYLumz8txg/exec";  
   const params = new URLSearchParams({  
-    codigo: codigoConductor,  
     latitud: latitud,  
     longitud: longitud,  
   });  
