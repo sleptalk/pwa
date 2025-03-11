@@ -9,7 +9,7 @@ if ("serviceWorker" in navigator) {
 }  
 
 // Variables globales  
-let codigoIngresado = false;  
+let codigoIngresado = false;  // Asegúrate de que esta línea solo aparezca una vez  
 let intervaloUbicacion;  
 
 // Solicitar permisos de notificación  
